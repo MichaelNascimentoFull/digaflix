@@ -20,7 +20,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!$token = auth()->attempt($validator->validated())) {
+        if (! $token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Senha e/ou email inválidos']);
         }
 
@@ -43,6 +43,8 @@ class AuthController extends Controller
             $validator->validated(),
             ['password' => bcrypt($request->password)]
         ));
+        
+        $user->sendEmailVerificationNotification();
 
         return response()->json([
             'message' => 'Usuário registrado com sucesso',
@@ -53,6 +55,11 @@ class AuthController extends Controller
     protected function createNewToken($token)
     {
         $user = auth()->user();
+
+        if (! $user->hasVerifiedEmail()){
+            return response()->json(['error' => 'Email não foi verificado']);
+        }
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
