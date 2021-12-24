@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Movie;
+use Illuminate\Support\Facades\Validator;
 
 class MoviesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +31,11 @@ class MoviesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = $this->validar($request->all());
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        return Movie::create($request->all());
     }
 
     /**
@@ -60,5 +70,14 @@ class MoviesController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function validar($request)
+    {
+        return Validator::make($request, [
+            'name' => 'required|string',
+            'file' => 'required|string',
+            'size' => 'required|string'
+        ]);
     }
 }
