@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\MoviesController;
-use Illuminate\Foundation\Mix;
+use App\Http\Controllers\TagsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,5 +26,8 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
-    Route::apiResources(['movies' => MoviesController::class ]);
+    Route::apiResources([
+        'movies' => MoviesController::class, 
+        'tags' => TagsController::class, 
+    ]);
 });
