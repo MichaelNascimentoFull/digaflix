@@ -2,7 +2,7 @@
   <div>
     <nav-component></nav-component>
     <router-view></router-view>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="position-fixed top-0 end-0 pt-5 pe-2" style="z-index: 11">
       <div
         id="liveToast"
         class="toast"
@@ -60,6 +60,10 @@ export default {
 <style lang="scss">
 .btn-auth {
   background-color: #2a394a;
+  color: white;
+}
+.btn-auth:hover {
+  background-color: #5b7481;
   color: white;
 }
 </style>

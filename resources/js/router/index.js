@@ -32,14 +32,14 @@ const routes = [
         component: () => import('../pages/SuccessPage.vue'),
     },
     {
-        path: '/resendVerify',
+        path: '/resendVerify/:userEmail',
         name: 'ResendVerify',
         component: () => import('../pages/ResendVerify.vue'),
     },
 ]
 
 const router = new VueRouter({
-    mode:'history',
+    mode: 'history',
     routes
 })
 

@@ -20,7 +20,7 @@ class VerificationController extends Controller
             $user->markEmailAsVerified();
         }
 
-        return redirect()->to('http://localhost:8000');
+        return redirect()->to('http://localhost:8000/successPage');
     }
     public function resend($user_email)
     {

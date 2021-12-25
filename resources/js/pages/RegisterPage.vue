@@ -136,12 +136,31 @@ export default {
         this.loading = false;
         return;
       }
-      this.$eventBus.$emit(
-        "newMessage",
-        "Cadastro",
-        "Cadastro realizado, verifique seu email",
-        "success"
-      );
+      this.$store.dispatch('Auth/register',this.newUser)
+        .then(()=>{
+          this.loading=false
+          this.$router.push({
+            name: 'ResendVerify', 
+            params: { userEmail: this.newUser.email} 
+          })
+          this.$eventBus.$emit(
+            "newMessage",
+            "Cadastro",
+            "Cadastro realizado, verifique seu email",
+            "success"
+          );
+        })
+        .catch(error => {
+          console.error('Error - RegisterPage', this.error)
+          console.log('Error - RegisterPage', this.error)
+          this.loading=false; 
+          this.$eventBus.$emit(
+            "newMessage",
+            "Cadastro",
+            "Erro",
+            "danger"
+          );
+        });
     },
   },
 };
@@ -152,5 +171,4 @@ export default {
   margin-top: 20px;
   max-width: 600px;
 }
-
 </style>>
