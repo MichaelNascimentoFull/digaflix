@@ -8,14 +8,30 @@
             <label for="exampleInputEmail1" class="form-label">Digite seu email para recuperar a senha </label>
             <input
               type="email"
+              :style="! validateEmail && EnableValidation ? 'border:1px solid red' : ''"
+			        v-model="email"
               class="form-control"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
             />
             <div id="emailHelp" class="form-text"></div>
           </div>
-          <div class="d-flex flex-row-reverse">
-            <button class="btn btn-auth">Enviar email</button>
+         <div class="d-flex flex-row-reverse">
+			   <button
+              class="btn btn-auth mt-3"
+              @click.prevent="login()"
+              :disabled="loading"
+            >
+              <template v-if="!loading"> Entrar </template>
+              <template v-else>
+                <span
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Entrando...
+              </template>
+            </button>
           </div>
         </form>
       </div>
@@ -24,7 +40,43 @@
 </template>
 
 <script>
-export default {};
+export default {
+ data: () => ({
+      email: "",
+    loading: false,
+    EnableValidation: false,
+  }),
+  computed: {
+    validateEmail() {
+      if (this.user.email.length >= 3 && this.user.email.includes("@")) {
+        return true;
+      }
+      return false;
+    }
+  },
+
+  methods: {
+    validation() {
+      var valid = true;
+      if (!this.validateEmail) valid = false;
+      return valid;
+    },
+    login() {
+      this.EnableValidation = true;
+      this.loading = true;
+      if (!this.validation()) {
+        this.loading = false;
+        return;
+      }
+      this.$eventBus.$emit(
+        "newMessage",
+        "Nova senha",
+        "Email para nova senha foi enviado",
+        "success"
+      );
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

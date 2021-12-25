@@ -3,23 +3,38 @@ import VueRouter from "vue-router";
 const routes = [
     {
         path: '',
-        name: 'home',
+        name: 'Home',
         component: () => import('../pages/HomePage.vue'),
     },
     {
         path: '/login',
-        name: 'login',
+        name: 'Login',
         component: () => import('../pages/LoginPage.vue'),
     },
     {
         path: '/register',
-        name: 'register',
+        name: 'Register',
         component: () => import('../pages/RegisterPage.vue'),
     },
     {
-        path: '/forgotpassword',
-        name: 'forgotpassword',
+        path: '/forgotPassword',
+        name: 'Forgotpassword',
         component: () => import('../pages/ForgotPassword.vue'),
+    },
+    {
+        path: '/newPassword',
+        name: 'NewPassword',
+        component: () => import('../pages/NewPassword.vue'),
+    },
+    {
+        path: '/successPage',
+        name: 'SuccessPage',
+        component: () => import('../pages/SuccessPage.vue'),
+    },
+    {
+        path: '/resendVerify',
+        name: 'ResendVerify',
+        component: () => import('../pages/ResendVerify.vue'),
     },
 ]
 
