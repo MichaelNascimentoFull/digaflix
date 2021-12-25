@@ -9,11 +9,13 @@
     <link rel="icon" href="{{ url('assets/camera_video_icon.icon') }}">
     
     <title>Digaflix</title>
+    
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 
 <body>
     <div id="app">
-        <example-component></example-component>
+        <app-component></app-component>
     </div>
     
     <script src="/js/app.js"></script>

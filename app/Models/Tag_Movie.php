@@ -9,8 +9,7 @@ class Tag_Movie extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['tag_id','movie_id'];
+    protected $fillable = ['tag_id', 'movie_id'];
 
-    protected $table='tags_movies';
-}
+    protected $table = 'tags_movies';
 }
