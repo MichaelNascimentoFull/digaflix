@@ -43,7 +43,7 @@
               class="dropdown-menu dropdown-menu-lg-end"
               aria-labelledby="navbarDropdown"
             >
-              <li><a class="dropdown-item" href="#">Sair</a></li>
+              <li><a class="dropdown-item" @click="logout" href="#">Sair</a></li>
             </ul>
           </li>
         </ul>
@@ -55,9 +55,37 @@
 <script>
 export default {
   data: () => ({
-    logged: false,
-    user: { name: "michael lopes" },
   }),
+  computed:{
+    logged(){return this.$store.state.Auth.loggedIn},
+    user(){return this.$store.state.Auth.user.user},
+  },
+  methods:{
+    logout(){
+        this.$store.dispatch('Auth/logout')
+        .then(()=>{
+          this.loading=false
+          this.$router.push({
+            name: 'Login', 
+          })
+          this.$eventBus.$emit(
+            "newMessage",
+            "Logout",
+            "Logout realizado com sucesso",
+            "success"
+          );
+        })
+        .catch(error => {
+          this.loading=false; 
+          this.$eventBus.$emit(
+            "newMessage",
+            "Logout",
+            "Erro",
+            "danger"
+          );
+        });
+    }
+  }
 };
 </script>
 

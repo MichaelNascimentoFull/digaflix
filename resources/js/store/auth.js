@@ -1,10 +1,17 @@
 import axios from "axios"
 
+const user = JSON.parse(localStorage.getItem('user'));
+
+const initialState = user
+	? { loggedIn: true, user }
+	: { loggedIn: false, user: null };
+
+
 export const authModule = {
 
 	namespaced: true,
 	state: {
-		user: {}, loggedIn: false
+		user: initialState.user, loggedIn: initialState.loggedIn
 	},
 
 	mutations: {
@@ -22,6 +29,8 @@ export const authModule = {
 			state.loggedIn = true
 		},
 		FAILURELOGIN(state) { state.loggedIn = false },
+
+		SUCCESSLOGOUT(state){ state.loggedIn = false,  state.user = null}
 	},
 
 	actions: {
@@ -37,7 +46,7 @@ export const authModule = {
 				);
 		},
 		login({ commit }, user) {
-			return axios.post('/api/auth/register', user)
+			return axios.post('/api/auth/login', user)
 				.then(
 					res => {
 						commit('SUCCESSLOGIN', res.data); return Promise.resolve(res.data);
@@ -49,7 +58,7 @@ export const authModule = {
 				);
 		},
 		sendVerifyEmail({ commit }, email) {
-			return axios.get('/api/auth/email/resend/'+ email)
+			return axios.get('/api/auth/email/resend/' + email)
 				.then(
 					res => {
 						commit('SUCCESSREGISTER'); return Promise.resolve(res.data);
@@ -57,6 +66,21 @@ export const authModule = {
 					error => {
 						console.log(error);
 						commit('FAILUREREGISTER'); return Promise.reject(error);
+					}
+				);
+		},
+		logout({ commit }) {
+			const loggedIn = JSON.parse(localStorage.getItem('user'));
+			const config = { headers: { Authorization: `Bearer ${loggedIn.access_token}` } };
+			localStorage.removeItem('user');
+			return axios.post('/api/auth/logout', {}, config)
+				.then(
+					res => {
+						commit('SUCCESSLOGOUT'); return Promise.resolve(res.data);
+					},
+					error => {
+						console.log(error);
+						commit('FAILURELOGOUT'); return Promise.reject(error);
 					}
 				);
 		},

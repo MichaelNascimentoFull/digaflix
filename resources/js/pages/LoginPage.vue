@@ -97,12 +97,31 @@ export default {
         this.loading = false;
         return;
       }
-      this.$eventBus.$emit(
+        this.$store.dispatch('Auth/login',this.user)
+        .then(()=>{
+          this.loading=false
+          this.$router.push({
+            name: 'Home', 
+          })
+         this.$eventBus.$emit(
         "newMessage",
         "Login",
         "Login realizado com sucesso",
         "success"
       );
+        })
+        .catch(error => {
+          console.error('Error - RegisterPage', this.error)
+          console.log('Error - RegisterPage', this.error)
+          this.loading=false; 
+          this.$eventBus.$emit(
+            "newMessage",
+            "Login",
+            "Erro",
+            "danger"
+          );
+        });
+
     },
   },
 };
