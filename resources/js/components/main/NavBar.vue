@@ -19,9 +19,13 @@
             <a class="nav-link active" aria-current="page" href="#">Início</a>
           </li>
         </ul>
-        <form class="d-flex" v-if="! logged">
-          <button class="btn btn-primary">Logar</button>
-          <button class="btn btn-primary ms-2 ps-2">Registrar</button>
+        <form class="d-flex" v-if="!logged">
+          <router-link to="/login">
+            <button class="btn btn-auth">Logar</button>
+          </router-link>
+          <router-link to="/register">
+            <button class="btn btn-auth ms-2 ps-2">Registrar</button>
+          </router-link>
         </form>
         <ul class="navbar-nav" v-else>
           <li class="nav-item dropdown">
@@ -33,9 +37,12 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {{user.name}}
+              {{ user.name }}
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <ul
+              class="dropdown-menu dropdown-menu-lg-end"
+              aria-labelledby="navbarDropdown"
+            >
               <li><a class="dropdown-item" href="#">Sair</a></li>
             </ul>
           </li>
@@ -47,16 +54,15 @@
 
 <script>
 export default {
-  data:()=>({
-    logged: false, 
-    user:{name:''}
+  data: () => ({
+    logged: false,
+    user: { name: "michael lopes" },
   }),
-
 };
 </script>
 
 <style lang="scss" scoped>
 nav {
-  background-color: #9ec5fe;
+  background-color: #81a6b5;
 }
 </style>

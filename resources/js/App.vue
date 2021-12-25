@@ -16,5 +16,8 @@ export default {
 </script>
 
 <style lang="scss">
-
+.btn-auth {
+  background-color: #2a394a;
+  color: white;
+}
 </style>
