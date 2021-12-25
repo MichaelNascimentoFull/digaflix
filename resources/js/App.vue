@@ -1,5 +1,6 @@
 <template>
   <div>
+    <nav-component></nav-component>
     <router-view></router-view>
   </div>
 </template>
@@ -14,5 +15,6 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+
 </style>
