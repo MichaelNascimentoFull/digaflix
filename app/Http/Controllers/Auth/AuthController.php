@@ -67,4 +67,17 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+
+    public function logout() 
+    {
+        auth()->logout();
+
+        return response()->json(['message' => 'Usuário deslogado com sucesso']);
+    }
+
+    public function refresh() 
+    {
+        return $this->createNewToken(auth()->refresh());
+    }
+
 }
