@@ -30,7 +30,13 @@ export const authModule = {
 		},
 		FAILURELOGIN(state) { state.loggedIn = false },
 
-		SUCCESSLOGOUT(state){ state.loggedIn = false,  state.user = null}
+		SUCCESSLOGOUT(state) { state.loggedIn = false, state.user = null },
+		SUCCESSREFRESH(state) {
+			localStorage.setItem('user', JSON.stringify(response.data));
+			localStorage.setItem('dataToken', Date.now());
+			localStorage.setItem('refreshed', false);
+		 },
+		FAILUREREFRESH(state) { },
 	},
 
 	actions: {
@@ -81,6 +87,20 @@ export const authModule = {
 					error => {
 						console.log(error);
 						commit('FAILURELOGOUT'); return Promise.reject(error);
+					}
+				);
+		},
+		refresh({ commit }) {
+			const loggedIn = JSON.parse(localStorage.getItem('user'));
+			const config = { headers: { Authorization: `Bearer ${loggedIn.access_token}` } };
+			return axios.post('/api/auth/refresh', {}, config)
+				.then(
+					res => {
+						commit('SUCCESSREFRESH'); return Promise.resolve(res.data);
+					},
+					error => {
+						console.log(error);
+						commit('FAILUREREFRESH'); return Promise.reject(error);
 					}
 				);
 		},
