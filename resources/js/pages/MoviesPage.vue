@@ -14,23 +14,40 @@
         </button>
       </div>
       <div class="card-body row g-2">
-        <div
-          class="col-12 col-sm-6"
-          v-for="(movie, index) in movies"
-          :key="index"
-        >
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">{{ movie.name }}</h5>
-              <p class="card-text">filmer</p>
-            </div>
-            <div class="card-footer">
-              <small class="text-muted">{{
-                movie.file + " - " + movie.size + " mb"
-              }}</small>
+        <template v-if="movies.lenght > 0">
+          <div
+            class="col-12 col-sm-6"
+            v-for="(movie, index) in movies"
+            :key="index"
+          >
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ movie.name }}</h5>
+                <p class="card-text">filmer</p>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted">{{
+                  movie.file + " - " + movie.size + " mb"
+                }}</small>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+        <template v-else-if="loading">
+          <div class="d-flex justify-content-center">
+            <span
+              class="spinner-border spinner-border-lg"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Carregando...
+          </div>
+        </template>
+        <template v-else>
+          <div class="d-flex justify-content-center">
+            <h5>Sem Filmes Cadastrados</h5>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -122,10 +139,7 @@ export default {
   }),
   computed: {
     movies() {
-      return [
-        { name: "vigadores", file: "avagers", size: "5" },
-        { name: "Homem Aranha", file: "avagers", size: "5" },
-      ];
+      return this.$store.state.Movie.movies;
     },
     validateMovie() {
       return true;

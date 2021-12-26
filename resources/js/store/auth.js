@@ -55,8 +55,6 @@ export const authModule = {
 			return axios.post('/api/auth/login', user)
 				.then(
 					res => {
-						console.log (res)
-						console.log (typeof res.data)
 						commit('SUCCESSLOGIN', res.data); return Promise.resolve(res.data);
 					},
 					error => {
