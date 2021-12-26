@@ -151,13 +151,11 @@ export default {
           );
         })
         .catch(error => {
-          console.error('Error - RegisterPage', this.error)
-          console.log('Error - RegisterPage', this.error)
           this.loading=false; 
           this.$eventBus.$emit(
             "newMessage",
             "Cadastro",
-            "Erro",
+            error.response.data,
             "danger"
           );
         });

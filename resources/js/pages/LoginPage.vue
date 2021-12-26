@@ -8,13 +8,15 @@
             <label for="exampleInputEmail1" class="form-label">Email </label>
             <input
               type="email"
-			        :style="! validateEmail && EnableValidation ? 'border:1px solid red' : ''"
-			        v-model="user.email"
+              :style="
+                !validateEmail && EnableValidation ? 'border:1px solid red' : ''
+              "
+              v-model="user.email"
               class="form-control"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
             />
-			<template v-if="! validateEmail && EnableValidation">
+            <template v-if="!validateEmail && EnableValidation">
               <small>Email não é valido</small>
             </template>
             <div id="emailHelp" class="form-text"></div>
@@ -23,12 +25,16 @@
             <label for="exampleInputPassword1" class="form-label">Senha</label>
             <input
               type="password"
-			        :style="! validatePassword && EnableValidation ? 'border:1px solid red' : ''"
-			        v-model="user.password"
+              :style="
+                !validatePassword && EnableValidation
+                  ? 'border:1px solid red'
+                  : ''
+              "
+              v-model="user.password"
               class="form-control"
               id="exampleInputPassword1"
             />
-			 <template v-if="! validatePassword && EnableValidation">
+            <template v-if="!validatePassword && EnableValidation">
               <small>Senha tem que ter 6 ou mais caracteres</small>
             </template>
           </div>
@@ -36,7 +42,7 @@
             <router-link to="/forgotPassword"> Esqueceu a senha?</router-link>
           </div>
           <div class="d-flex flex-row-reverse">
-			   <button
+            <button
               class="btn btn-auth mt-3"
               @click.prevent="login()"
               :disabled="loading"
@@ -60,7 +66,7 @@
 
 <script>
 export default {
- data: () => ({
+  data: () => ({
     user: {
       email: "",
       password: "",
@@ -97,31 +103,31 @@ export default {
         this.loading = false;
         return;
       }
-        this.$store.dispatch('Auth/login',this.user)
-        .then(()=>{
-          this.loading=false
+      this.$store
+        .dispatch("Auth/login", this.user)
+        .then((res) => {
+          console.log(res);
+          console.log("asas");
+          this.loading = false;
           this.$router.push({
-            name: 'Home', 
-          })
-         this.$eventBus.$emit(
-        "newMessage",
-        "Login",
-        "Login realizado com sucesso",
-        "success"
-      );
-        })
-        .catch(error => {
-          console.error('Error - RegisterPage', this.error)
-          console.log('Error - RegisterPage', this.error)
-          this.loading=false; 
+            name: "Home",
+          });
           this.$eventBus.$emit(
             "newMessage",
             "Login",
-            "Erro",
+            "Login realizado com sucesso",
+            "success"
+          );
+        })
+        .catch((error) => {
+          this.loading = false;
+          this.$eventBus.$emit(
+            "newMessage",
+            "Login",
+            error.response.data.error,
             "danger"
           );
         });
-
     },
   },
 };
@@ -132,5 +138,4 @@ export default {
   margin-top: 20px;
   max-width: 600px;
 }
-
 </style>

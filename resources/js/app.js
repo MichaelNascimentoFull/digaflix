@@ -30,7 +30,6 @@ window.api = api;
 Vue.component('multiselect', Multiselect)
 Vue.component('app-component', require('../js/App.vue').default);
 Vue.component('nav-component', require('./components/main/NavBar.vue').default);
-Vue.component('modal-movies', require('./components/movies/ModalMovies.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
