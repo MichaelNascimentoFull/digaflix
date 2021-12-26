@@ -11,6 +11,9 @@ window.Vue = require('vue').default;
 import VueRouter from 'vue-router';
 import router from './router/index';
 import store from './store/index'
+import api from './axios';
+
+window.api = api;
 
 /**
  * The following block of code may be used to automatically register your
@@ -25,6 +28,7 @@ import store from './store/index'
 
 Vue.component('app-component', require('../js/App.vue').default);
 Vue.component('nav-component', require('./components/main/NavBar.vue').default);
+Vue.component('modal-movies', require('./components/movies/ModalMovies.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
