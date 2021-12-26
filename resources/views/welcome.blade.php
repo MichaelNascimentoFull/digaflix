@@ -10,6 +10,8 @@
     
     <title>Digaflix</title>
     
+    <script src="https://kit.fontawesome.com/40d076ef72.js" crossorigin="anonymous"></script>
+    
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 
