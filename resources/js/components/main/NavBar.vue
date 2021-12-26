@@ -18,6 +18,9 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#">Início</a>
           </li>
+          <router-link to="/movies" v-if="logged">
+            <a class="nav-link active" aria-current="page" href="#">Filmes</a>
+          </router-link>
         </ul>
         <form class="d-flex" v-if="!logged">
           <router-link to="/login">
@@ -92,5 +95,8 @@ export default {
 <style lang="scss" scoped>
 nav {
   background-color: #81a6b5;
+}
+a {
+    text-decoration: none;
 }
 </style>

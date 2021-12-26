@@ -12,6 +12,7 @@ import VueRouter from 'vue-router';
 import router from './router/index';
 import store from './store/index'
 import api from './axios';
+import Multiselect from 'vue-multiselect'
 
 window.api = api;
 
@@ -26,6 +27,7 @@ window.api = api;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+Vue.component('multiselect', Multiselect)
 Vue.component('app-component', require('../js/App.vue').default);
 Vue.component('nav-component', require('./components/main/NavBar.vue').default);
 Vue.component('modal-movies', require('./components/movies/ModalMovies.vue').default);

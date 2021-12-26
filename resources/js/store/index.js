@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {authModule} from './auth'
+import {movieModule} from './movie'
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ const store = new Vuex.Store({
 
 	modules: {
 		Auth:authModule,
+		Movie:movieModule,
 	}
 })
 

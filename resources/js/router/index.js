@@ -36,6 +36,11 @@ const routes = [
         name: 'ResendVerify',
         component: () => import('../pages/ResendVerify.vue'),
     },
+    {
+        path: '/movies',
+        name: 'MoviesPage',
+        component: () => import('../pages/MoviesPage.vue'),
+    },
 ]
 
 const router = new VueRouter({
