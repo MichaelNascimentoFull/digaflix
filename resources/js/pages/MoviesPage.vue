@@ -27,7 +27,7 @@
       </div>
       <div class="card-body row g-2">
         <div
-          class="col-12 col-sm-6"
+          class="col-12 col-sm-6 col-lg-4 col-xl-3"
           v-for="(movie, index) in movies"
           :key="index"
         >
