@@ -5,22 +5,25 @@
         <div>
           Filme
           <button
-          class="btn "
-          data-bs-toggle="tooltip"
-          data-bs-placement="bottom"
-          title="Ordenar"
-          @click="orderBy"
-        >
-          <i v-show="typeOrder=='asc'" class="fas fa-sort-alpha-up"></i>
-          <i v-show="typeOrder=='desc'" class="fas fa-sort-alpha-down"></i>
-        </button>
-        </div> 
+            class="btn"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="Ordenar"
+            @click="orderBy"
+          >
+            <i v-show="typeOrder == 'asc'" class="fas fa-sort-alpha-up"></i>
+            <i v-show="typeOrder == 'desc'" class="fas fa-sort-alpha-down"></i>
+          </button>
+        </div>
         <button
           class="btn btn-auth"
           data-bs-toggle="tooltip"
           data-bs-placement="bottom"
           title="Cadastar filme"
-          @click="modal.show()"
+          @click="
+            resetMovie();
+            modal.show();
+          "
         >
           <i class="fas fa-upload"></i>
         </button>
@@ -33,20 +36,51 @@
         >
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">{{'Nome : '+ movie.name }}</h5>
+              <h5 class="card-title">{{ "Nome : " + movie.name }}</h5>
               <p class="card-text">
                 Tags :
-                <span class="badge rounded-pill bg-secondary me-1"  v-for="(tags, ind) in movie.tagsmovies"  :key="ind">{{tags.tag.name}}</span>
+                <span
+                  class="badge rounded-pill bg-secondary me-1"
+                  v-for="(tags, ind) in movie.tagsmovies"
+                  :key="ind"
+                  >{{ tags.tag.name }}</span
+                >
               </p>
+              <div class="d-flex justify-content-end">
+                <button
+                  class="btn btn-secondary me-1"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  title="Editar filme"
+                  @click="
+                    editedMovie(movie);
+                    modal.show();
+                  "
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  class="btn btn-danger"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  title="Deletar filme"
+                  @click="deleteMovie(movie.id)"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
             </div>
             <div class="card-footer">
               <small class="text-muted">{{
-                movie.file + " - " + (parseInt(movie.size)/1000000).toFixed(2) + " mb"
+                movie.file +
+                " | " +
+                (parseInt(movie.size) / 1000000).toFixed(2) +
+                " mb"
               }}</small>
             </div>
           </div>
         </div>
-        <template v-if="movies.lenght == 0 && loading">
+        <template v-if="movies.length == 0 && loading">
           <div class="d-flex justify-content-center">
             <span
               class="spinner-border spinner-border-lg"
@@ -56,20 +90,21 @@
             Carregando...
           </div>
         </template>
-        <template v-else-if="movies.lenght == 0 && !loading">
+        <template v-else-if="movies.length == 0 && !loading">
           <div class="d-flex justify-content-center">
             <h5>Sem Filmes Cadastrados</h5>
           </div>
         </template>
       </div>
     </div>
-
+    
+    <!-- MODAL -->
     <div class="modal fade" ref="exampleModal" tabindex="-2" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h4 class="modal-title" id="exampleModalLabel">
-              {{ "Salvar Filme" }}
+              {{'id' in fileMovie?'Editar Filme': 'Salvar Filme' }}
             </h4>
             <button
               type="button"
@@ -90,7 +125,7 @@
                   aria-describedby="emailHelp"
                 />
               </div>
-              <div class="mb-3">
+              <div class="mb-3" v-if="! ('id' in fileMovie)">
                 <label for="nameMovie" class="form-label">Filme</label>
                 <input
                   type="file"
@@ -99,6 +134,15 @@
                   accept="video/mp4,video/x-m4v,video/*"
                   @change="selectFile"
                 />
+              </div>
+              <div class="mb-3" v-else>
+                Arquivo | Tamanho: <br>
+                {{
+                  fileMovie.file +
+                  " | " +
+                  (parseInt(fileMovie.size) / 1000000).toFixed(2) +
+                  " mb"
+                }}
               </div>
               <div class="mb-3">
                 <label for="tagMovie" class="form-label">Tags</label>
@@ -115,6 +159,7 @@
                   :multiple="true"
                   tag-placeholder="Adicionar tag"
                   @open="changeMsgEmpty"
+                  @remove="removeTag"
                 >
                   <template slot="noResult">
                     <span>no result found.</span>
@@ -131,8 +176,11 @@
             >
               Fechar
             </button>
-            <button type="button" class="btn btn-primary" @click="saveMovie">
+            <button v-if="! ('id' in fileMovie)" type="button" class="btn btn-primary" @click="saveMovie">
               Salvar
+            </button>
+            <button v-else type="button" class="btn btn-primary" @click="editMovie(fileMovie)">
+              Atualizar
             </button>
           </div>
         </div>
@@ -149,7 +197,7 @@ export default {
     modal: null,
     fileMovie: { name: "", file: "", size: "", movie: "", tags: [] },
     tags: [],
-    typeOrder:'asc'
+    typeOrder: "asc",
   }),
   computed: {
     movies() {
@@ -160,18 +208,29 @@ export default {
     },
   },
   mounted() {
-    this.loadTooltips()
-     },
+    this.loadTooltips();
+  },
   created() {
     this.getMovies();
   },
   methods: {
-    loadTooltips(){
-       this.modal = new Modal(this.$refs.exampleModal);
-        Array.from(
-          document.querySelectorAll('button[data-bs-toggle="tooltip"]')
-        ).forEach((tooltipNode) => new Tooltip(tooltipNode));
-
+    editedMovie(movie) {
+      //Função de preparo do filme pra modal de edição
+      this.fileMovie =  Object.assign({}, movie);
+      var tags = this.fileMovie.tagsmovies.map(function(val){
+        return val.tag.name
+      })
+      this.fileMovie.tags = tags
+    },
+    resetMovie() {
+      console.log('foi')
+      this.fileMovie = { name: "", file: "", size: "", movie: "", tags: [] };
+    },
+    loadTooltips() {
+      this.modal = new Modal(this.$refs.exampleModal);
+      Array.from(
+        document.querySelectorAll('button[data-bs-toggle="tooltip"]')
+      ).forEach((tooltipNode) => new Tooltip(tooltipNode));
     },
     selectFile(event) {
       this.fileMovie.movie = event.target.files[0];
@@ -179,7 +238,7 @@ export default {
     getMovies() {
       this.loading = true;
       this.$store
-        .dispatch("Movie/getMovies",this.typeOrder)
+        .dispatch("Movie/getMovies", this.typeOrder)
         .then(() => {
           this.loading = false;
         })
@@ -208,10 +267,12 @@ export default {
             "Cadastro de filme realizado com sucesso",
             "success"
           );
+          this.loadTooltips
         })
         .catch((error) => {
           this.loading = false;
           this.$eventBus.$emit("newMessage", "Filme", "Erro", "danger");
+          this.loadTooltips
         });
     },
     editMovie(movieEdited) {
@@ -254,10 +315,16 @@ export default {
           this.$eventBus.$emit("newMessage", "Filme", "Erro", "danger");
         });
     },
-    addTag(newTag) {
-      console.log(newTag);
-      this.fileMovie.tags.push(newTag);
-    },
+      addTag(newTag) {
+        this.fileMovie.tags.push(newTag);
+      },
+      removeTag(tag) {
+        console.log(tag)
+        var index = this.fileMovie.tags.findIndex(o=> o==tag)
+        console.log(index)
+        this.fileMovie.tags.splice(index,1);
+         this.$forceUpdate();
+      },
     changeMsgEmpty() {
       if (this.fileMovie.tags.length == 0) {
         var x = document.getElementsByClassName("multiselect__option");
@@ -266,17 +333,16 @@ export default {
         }
       }
     },
-    orderBy(){
-      console.log('asc',this.typeOrder)
-      if(this.typeOrder=='asc'){
-        this.typeOrder='desc'
-        this.getMovies()
-      }else{
-        this.typeOrder='asc'
-        this.getMovies()
+    orderBy() {
+      console.log("asc", this.typeOrder);
+      if (this.typeOrder == "asc") {
+        this.typeOrder = "desc";
+        this.getMovies();
+      } else {
+        this.typeOrder = "asc";
+        this.getMovies();
       }
-
-    }
+    },
   },
 };
 </script>

@@ -8,6 +8,7 @@ use App\Models\Tag_Movie;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Ui\Presets\React;
 
 class MoviesController extends Controller
 {
@@ -34,8 +35,13 @@ class MoviesController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = $this->validar($request->all());
+        $validator = $this->validateMovies($request->all());
         if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+
+        $validatorTags = $this->validateTags($request->all());
+        if ($validatorTags->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
 
@@ -43,27 +49,20 @@ class MoviesController extends Controller
 
         Storage::disk('movies')->put($movie->id . $request->file, $request->movie);
 
-        // Tags existentes das enviadas
-        $tags = Tag::whereIn('name', $request->tags)->get();
-
         foreach ($request->tags as $tag) {
-            // Verificar se tag existe
-            $tagExist = $tags->first(function ($value, $key) use ($tag) {
-                return $value == $tag;
-            });
-            if ($tagExist == null) {
-                // Adicionar nova tag
-                $tagExist = new Tag;
-                $tagExist->name = $tag;
-                $tagExist->save();
-            }
+            $tagExist = Tag::firstOrCreate([
+                'name' => $tag
+            ]);
             // Adicionar relação tag com movies
             $tag_movie = new Tag_Movie;
             $tag_movie->movie_id = $movie->id;
             $tag_movie->tag_id = $tagExist->id;
             $tag_movie->save();
         }
-        return $movie->load(['tagsmovies', 'tagsmovies.tag']);
+
+        $requestIndex = New Request;
+        $requestIndex->merge(['order' => 'asc']);
+        return $this->index($requestIndex);
     }
 
     /**
@@ -86,12 +85,43 @@ class MoviesController extends Controller
      */
     public function update(Request $request, Movie $movie)
     {
-        $validator = $this->validar($request->all());
+        $validator = $this->validateMovies($request->all());
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
+
+        $validatorTags = $this->validateTags($request->all());
+        if ($validatorTags->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+
         $movie->update($request->all());
-        return $movie->load(['tagsmovies', 'tagsmovies.tag']);
+
+        $movie->load(['tagsmovies', 'tagsmovies.tag']);
+        foreach ($request->tags as $tag) {
+            // Verificar se tag ja foi cadastrada pra esse movie
+            $tagMovieExist = $movie->tagsmovies->first(function ($value, $key) use ($tag) {
+                return $value->tag->name == $tag;
+            });
+            if ($tagMovieExist == null) {
+                $tagExist = Tag::firstOrCreate([
+                    'name' => $tag
+                ]);
+                // Adicionar relação tag com movies
+                $tag_movie = new Tag_Movie;
+                $tag_movie->movie_id = $movie->id;
+                $tag_movie->tag_id = $tagExist->id;
+                $tag_movie->save();
+            }
+        }
+        $tagMovieNotExisted = $movie->tagsmovies->whereNotIn('tag.name',$request->tags);
+        if(count( $tagMovieNotExisted)>0){
+            $tagMovieNotExisted->each->delete();
+        };
+
+        $requestIndex = New Request;
+        $requestIndex->merge(['order' => 'asc']);
+        return $this->index($requestIndex);
     }
 
     /**
@@ -105,14 +135,26 @@ class MoviesController extends Controller
         Storage::disk('movies')->delete($movie->id . $movie->file);
         Tag_Movie::where('movie_id', '=', $movie->id)->delete();
         $movie->delete();
+
+        $requestIndex = New Request;
+        $requestIndex->merge(['order' => 'asc']);
+        return $this->index($requestIndex);
     }
 
-    public function validar($request)
+    public function validateMovies($request)
     {
         return Validator::make($request, [
             'name' => 'required|string',
             'file' => 'required|string',
             'size' => 'required|alpha_num'
+        ]);
+    }
+
+    public function validateTags($request)
+    {
+        return Validator::make($request, [
+            "tags"    => "required|array",
+            "tags.*"  => "required|string|distinct",
         ]);
     }
 }
