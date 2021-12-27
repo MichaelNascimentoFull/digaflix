@@ -2,7 +2,19 @@
   <div class="container mt-sm-5">
     <div class="card text-left">
       <div class="card-header h3 d-flex justify-content-between">
-        Filme
+        <div>
+          Filme
+          <button
+          class="btn "
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Ordenar"
+          @click="orderBy"
+        >
+          <i v-show="typeOrder=='asc'" class="fas fa-sort-alpha-up"></i>
+          <i v-show="typeOrder=='desc'" class="fas fa-sort-alpha-down"></i>
+        </button>
+        </div> 
         <button
           class="btn btn-auth"
           data-bs-toggle="tooltip"
@@ -14,26 +26,27 @@
         </button>
       </div>
       <div class="card-body row g-2">
-        <template v-if="movies.lenght > 0">
-          <div
-            class="col-12 col-sm-6"
-            v-for="(movie, index) in movies"
-            :key="index"
-          >
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">{{ movie.name }}</h5>
-                <p class="card-text">filmer</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">{{
-                  movie.file + " - " + movie.size + " mb"
-                }}</small>
-              </div>
+        <div
+          class="col-12 col-sm-6"
+          v-for="(movie, index) in movies"
+          :key="index"
+        >
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{'Nome : '+ movie.name }}</h5>
+              <p class="card-text">
+                Tags :
+                <span class="badge rounded-pill bg-secondary me-1"  v-for="(tags, ind) in movie.tagsmovies"  :key="ind">{{tags.tag.name}}</span>
+              </p>
+            </div>
+            <div class="card-footer">
+              <small class="text-muted">{{
+                movie.file + " - " + (parseInt(movie.size)/1000000).toFixed(2) + " mb"
+              }}</small>
             </div>
           </div>
-        </template>
-        <template v-else-if="loading">
+        </div>
+        <template v-if="movies.lenght == 0 && loading">
           <div class="d-flex justify-content-center">
             <span
               class="spinner-border spinner-border-lg"
@@ -43,7 +56,7 @@
             Carregando...
           </div>
         </template>
-        <template v-else>
+        <template v-else-if="movies.lenght == 0 && !loading">
           <div class="d-flex justify-content-center">
             <h5>Sem Filmes Cadastrados</h5>
           </div>
@@ -136,6 +149,7 @@ export default {
     modal: null,
     fileMovie: { name: "", file: "", size: "", movie: "", tags: [] },
     tags: [],
+    typeOrder:'asc'
   }),
   computed: {
     movies() {
@@ -146,22 +160,26 @@ export default {
     },
   },
   mounted() {
-    this.modal = new Modal(this.$refs.exampleModal);
-    Array.from(
-      document.querySelectorAll('button[data-bs-toggle="tooltip"]')
-    ).forEach((tooltipNode) => new Tooltip(tooltipNode));
-  },
+    this.loadTooltips()
+     },
   created() {
     this.getMovies();
   },
   methods: {
+    loadTooltips(){
+       this.modal = new Modal(this.$refs.exampleModal);
+        Array.from(
+          document.querySelectorAll('button[data-bs-toggle="tooltip"]')
+        ).forEach((tooltipNode) => new Tooltip(tooltipNode));
+
+    },
     selectFile(event) {
       this.fileMovie.movie = event.target.files[0];
     },
     getMovies() {
       this.loading = true;
       this.$store
-        .dispatch("Movie/getMovies")
+        .dispatch("Movie/getMovies",this.typeOrder)
         .then(() => {
           this.loading = false;
         })
@@ -172,10 +190,14 @@ export default {
     },
     saveMovie() {
       this.loading = true;
-      if (!this.validateMovie()) {
+      if (!this.validateMovie) {
         this.loading = false;
         return;
       }
+      console.log(this.fileMovie);
+      console.log(this.fileMovie.movie.name);
+      this.fileMovie.file = this.fileMovie.movie.name;
+      this.fileMovie.size = this.fileMovie.movie.size;
       this.$store
         .dispatch("Movie/saveMovie", this.fileMovie)
         .then(() => {
@@ -194,7 +216,7 @@ export default {
     },
     editMovie(movieEdited) {
       this.loading = true;
-      if (!this.validateMovie()) {
+      if (!this.validateMovie) {
         this.loading = false;
         return;
       }
@@ -244,6 +266,17 @@ export default {
         }
       }
     },
+    orderBy(){
+      console.log('asc',this.typeOrder)
+      if(this.typeOrder=='asc'){
+        this.typeOrder='desc'
+        this.getMovies()
+      }else{
+        this.typeOrder='asc'
+        this.getMovies()
+      }
+
+    }
   },
 };
 </script>

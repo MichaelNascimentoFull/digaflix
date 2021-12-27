@@ -8,8 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Movie extends Model
 {
     use HasFactory;
-        
-    protected $fillable = ['name','file','size'];
 
-    protected $table='movies';
+    protected $fillable = ['name', 'file', 'size'];
+
+    protected $table = 'movies';
+
+    public function tagsmovies()
+    {
+        return $this->hasMany('App\Models\Tag_Movie', 'movie_id');
+    }
 }

@@ -2,24 +2,27 @@ export const movieModule = {
 
 	namespaced: true,
 	state: {
-		movies:[],
+		movies: [],
 	},
 
 	mutations: {
-SUCCESSGET(state, movies){ state.movies = movies},
-FAILUREGET(state){},
-SUCCESSSAVE(state){},
-FAILURESAVE(state){},
-SUCCESSDELETE(state){},
-FAILUREDELETE(state){}
+		SUCCESSGET(state, movies) {
+			state.movies = movies
+		},
+		FAILUREGET(state) { },
+		SUCCESSSAVE(state) { },
+		FAILURESAVE(state) { },
+		SUCCESSDELETE(state) { },
+		FAILUREDELETE(state) { }
 	},
 
 	actions: {
-		getMovies({ commit }) {
-			return api.get('/movies')
+		getMovies({ commit },order) {
+			return api.get('/movies?order='+order)
 				.then(
 					res => {
-						commit('SUCCESSGET',res.data); return Promise.resolve(res.data);
+						console.log('res', res)
+						commit('SUCCESSGET', res.data); return Promise.resolve(res.data);
 					},
 					error => {
 						console.log(error);
@@ -31,7 +34,7 @@ FAILUREDELETE(state){}
 			return api.post('/movies', fileMovie)
 				.then(
 					res => {
-						commit('SUCCESSSAVE',res.data); return Promise.resolve(res.data);
+						commit('SUCCESSSAVE', res.data); return Promise.resolve(res.data);
 					},
 					error => {
 						console.log(error);
@@ -40,10 +43,13 @@ FAILUREDELETE(state){}
 				);
 		},
 		editMovie({ commit }, movieEdited) {
-			return api.put('/movies/'+movieEdited.id, movieEdited)
+			movieEdited.tagsmovies = movieEdited.tags.map(function(val){ 
+				return {tag:val}
+			})
+			return api.put('/movies/' + movieEdited.id, movieEdited)
 				.then(
 					res => {
-						commit('SUCCESSSAVE',res.data); return Promise.resolve(res.data);
+						commit('SUCCESSSAVE', res.data); return Promise.resolve(res.data);
 					},
 					error => {
 						console.log(error);
@@ -52,10 +58,10 @@ FAILUREDELETE(state){}
 				);
 		},
 		deleteMovie({ commit }, id) {
-			return api.delete('/movies/'+id)
+			return api.delete('/movies/' + id)
 				.then(
 					res => {
-						commit('SUCCESSDELETE',res.data); return Promise.resolve(res.data);
+						commit('SUCCESSDELETE', res.data); return Promise.resolve(res.data);
 					},
 					error => {
 						console.log(error);

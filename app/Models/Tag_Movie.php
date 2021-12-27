@@ -12,4 +12,9 @@ class Tag_Movie extends Model
     protected $fillable = ['tag_id', 'movie_id'];
 
     protected $table = 'tags_movies';
+
+    public function tag()
+    {
+        return $this->belongsTo('App\Models\Tag', 'tag_id');
+    }
 }
