@@ -1,66 +1,75 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Digaflix
+## Site de upload de Filmes
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Crie sua conta e faça upload de filmes
 
-## About Laravel
+## Software
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel 8
+- vue 2
+- JWT
+- Bootstrap 5
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Faça o clone do repositorio
 
-## Learning Laravel
+```sh
+cd digaflix
+docker-compose build
+docker-compose up -d
+docker-compose exec laravel-vue bash
+chmod -R 777 [user] .
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret
+php artisan storage:link
+npm install
+npm run dev
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Plugins
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+| Plugin | README |
+| ------ | ------ |
+| vue-multselect | https://github.com/shentao/vue-multiselect |
+| tymon/jwt-auth | https://jwt-auth.readthedocs.io/en/docs/laravel-installation/ |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Utilização
 
-### Premium Partners
+Crie um database em localhost:8081 Para conectar: 
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-- **[Romega Software](https://romegasoftware.com)**
+- Servidor : mysqldb
+- Utilizador : root
+- Palavra-passe : laravel
 
-## Contributing
+Configure o arquivo env. com as configurações de database e email, para validação da conta, use o maiotrap para configuração de email
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/96316977/147501717-73c5ba9b-0270-4370-b1a0-59f300f26fbb.png)
 
-## Code of Conduct
+Depois no terminal
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```sh
+cd digaflix
+docker-compose exec laravel-vue bash
+php artisan migrate
+php artisan config:cache
+```
 
-## Security Vulnerabilities
+Acesse http://localhost:8000/
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Faça o Cadastro em Registrar, confirme seu email, faça o login, cadastre filmes de até 5mb, ordene a lista de filmes
 
-## License
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/96316977/147504922-e61c22d7-32d7-4c4d-b258-29a683fac002.gif)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Validação de Formulario e Tamanho de Arquivo
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/96316977/147505021-64ed260d-5102-4865-a7dc-e198221a3b22.gif)
+
+Responsividade
+
+
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/96316977/147505061-ac3dfefd-3958-499b-bc57-4f626c40b86f.png)
