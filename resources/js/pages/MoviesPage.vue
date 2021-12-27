@@ -130,10 +130,14 @@
                 <input
                   type="file"
                   class="form-control"
+                  :style="movieAlert ? 'border:1px solid red' : ''"
                   id="nameMovie"
                   accept="video/mp4,video/x-m4v,video/*"
                   @change="selectFile"
                 />
+                <template v-if="movieAlert">
+                  <small>Filme tem que ter 5mb no máximo</small>
+                </template>
               </div>
               <div class="mb-3" v-else>
                 Arquivo | Tamanho: <br>
@@ -176,7 +180,7 @@
             >
               Fechar
             </button>
-            <button v-if="! ('id' in fileMovie)" type="button" class="btn btn-primary" @click="saveMovie">
+            <button v-if="! ('id' in fileMovie)" type="button" :disabled="movieAlert" class="btn btn-primary" @click="saveMovie">
               Salvar
             </button>
             <button v-else type="button" class="btn btn-primary" @click="editMovie(fileMovie)">
@@ -198,13 +202,11 @@ export default {
     fileMovie: { name: "", file: "", size: "", movie: "", tags: [] },
     tags: [],
     typeOrder: "asc",
+    movieAlert: false,
   }),
   computed: {
     movies() {
       return this.$store.state.Movie.movies;
-    },
-    validateMovie() {
-      return true;
     },
   },
   mounted() {
@@ -223,8 +225,9 @@ export default {
       this.fileMovie.tags = tags
     },
     resetMovie() {
-      console.log('foi')
       this.fileMovie = { name: "", file: "", size: "", movie: "", tags: [] };
+      this.movieAlert = false;
+      this.$forceUpdate();
     },
     loadTooltips() {
       this.modal = new Modal(this.$refs.exampleModal);
@@ -234,6 +237,7 @@ export default {
     },
     selectFile(event) {
       this.fileMovie.movie = event.target.files[0];
+      this.validateMovie()
     },
     getMovies() {
       this.loading = true;
@@ -249,7 +253,7 @@ export default {
     },
     saveMovie() {
       this.loading = true;
-      if (!this.validateMovie) {
+      if (! this.validateMovie()) {
         this.loading = false;
         return;
       }
@@ -268,6 +272,7 @@ export default {
             "success"
           );
           this.loadTooltips
+          this.modal.hide()
         })
         .catch((error) => {
           this.loading = false;
@@ -277,10 +282,6 @@ export default {
     },
     editMovie(movieEdited) {
       this.loading = true;
-      if (!this.validateMovie) {
-        this.loading = false;
-        return;
-      }
       this.$store
         .dispatch("Movie/editMovie", movieEdited)
         .then(() => {
@@ -291,6 +292,7 @@ export default {
             "Filme atualizado com sucesso",
             "success"
           );
+          this.modal.hide()
         })
         .catch((error) => {
           this.loading = false;
@@ -298,8 +300,10 @@ export default {
         });
     },
     deleteMovie(id) {
-      this.loading = true;
-      this.$store
+      if(confirm('Deseja deletar esse filme?')){
+
+        this.loading = true;
+        this.$store
         .dispatch("Movie/deleteMovie", id)
         .then(() => {
           this.loading = false;
@@ -314,16 +318,18 @@ export default {
           this.loading = false;
           this.$eventBus.$emit("newMessage", "Filme", "Erro", "danger");
         });
+      }
     },
       addTag(newTag) {
         this.fileMovie.tags.push(newTag);
+        this.$forceUpdate();
       },
       removeTag(tag) {
         console.log(tag)
         var index = this.fileMovie.tags.findIndex(o=> o==tag)
         console.log(index)
         this.fileMovie.tags.splice(index,1);
-         this.$forceUpdate();
+        this.$forceUpdate();
       },
     changeMsgEmpty() {
       if (this.fileMovie.tags.length == 0) {
@@ -343,6 +349,15 @@ export default {
         this.getMovies();
       }
     },
+    validateMovie(){
+      if(this.fileMovie.movie==''){return false}
+      if(this.fileMovie.movie.size>5000000){
+        this.movieAlert = true
+        return false
+      } 
+      this.movieAlert = false
+      return true
+    }
   },
 };
 </script>

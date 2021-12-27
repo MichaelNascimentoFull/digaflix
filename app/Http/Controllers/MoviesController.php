@@ -153,8 +153,8 @@ class MoviesController extends Controller
     public function validateTags($request)
     {
         return Validator::make($request, [
-            "tags"    => "required|array",
-            "tags.*"  => "required|string|distinct",
+            "tags"    => "nullable|array",
+            "tags.*"  => "nullable|string|distinct",
         ]);
     }
 }
