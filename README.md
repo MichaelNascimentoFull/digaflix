@@ -39,7 +39,7 @@ npm run dev
 
 ## Utilização
 
-Crie um database em localhost:8081 Para conectar: 
+Crie um database em nophpmyadmin, em localhost:8081. Para conectar: 
 
 - Servidor : mysqldb
 - Utilizador : root
