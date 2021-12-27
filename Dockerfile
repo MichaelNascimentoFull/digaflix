@@ -1,7 +1,17 @@
-FROM wyveo/nginx-php-fpm:php74
+FROM php:7.4-apache
 
-WORKDIR /usr/share/nginx/
-RUN rm -rf /usr/share/nginx/html
-COPY . /usr/share/nginx
-RUN chmod -R 775 /usr/share/nginx/storage/*
-RUN ln -s public html
+RUN a2enmod rewrite
+
+RUN apt-get update \
+  && apt-get install -y libzip-dev unzip zlib1g-dev libicu-dev wget gnupg g++ git openssh-client libpng-dev iproute2 \
+  && docker-php-ext-configure intl \
+  && docker-php-ext-install intl pdo_mysql zip gd
+
+RUN pecl install -f xdebug && docker-php-ext-enable xdebug;
+
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash
+
+RUN apt-get update \
+  && apt-get install -y nodejs
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
