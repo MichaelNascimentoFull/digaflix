@@ -104,6 +104,18 @@ export const authModule = {
 					}
 				);
 		},
+		sendReset({ commit },email) {
+			return axios.get('/api/auth/email/sendReset/'+email)
+				.then(
+					res => {
+						return Promise.resolve(res.data);
+					},
+					error => {
+						console.log(error);
+						return Promise.reject(error);
+					}
+				);
+		},
 	},
 
 	modules: {

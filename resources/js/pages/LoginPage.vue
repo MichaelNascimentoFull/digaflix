@@ -106,11 +106,9 @@ export default {
       this.$store
         .dispatch("Auth/login", this.user)
         .then((res) => {
-          console.log(res);
-          console.log("asas");
           this.loading = false;
           this.$router.push({
-            name: "Home",
+            name: "MoviesPage",
           });
           this.$eventBus.$emit(
             "newMessage",

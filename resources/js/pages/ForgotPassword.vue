@@ -5,19 +5,23 @@
       <div class="card-body">
         <form>
           <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Digite seu email para recuperar a senha </label>
+            <label for="exampleInputEmail1" class="form-label"
+              >Digite seu email para recuperar a senha
+            </label>
             <input
               type="email"
-              :style="! validateEmail && EnableValidation ? 'border:1px solid red' : ''"
-			        v-model="email"
+              :style="
+                !validateEmail && EnableValidation ? 'border:1px solid red' : ''
+              "
+              v-model="email"
               class="form-control"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
             />
             <div id="emailHelp" class="form-text"></div>
           </div>
-         <div class="d-flex flex-row-reverse">
-			   <button
+          <div class="d-flex flex-row-reverse">
+            <button
               class="btn btn-auth mt-3"
               @click.prevent="login()"
               :disabled="loading"
@@ -41,18 +45,18 @@
 
 <script>
 export default {
- data: () => ({
-      email: "",
+  data: () => ({
+    email: "",
     loading: false,
     EnableValidation: false,
   }),
   computed: {
     validateEmail() {
-      if (this.user.email.length >= 3 && this.user.email.includes("@")) {
+      if (this.email.length >= 3 && this.email.includes("@")) {
         return true;
       }
       return false;
-    }
+    },
   },
 
   methods: {
@@ -68,12 +72,26 @@ export default {
         this.loading = false;
         return;
       }
-      this.$eventBus.$emit(
-        "newMessage",
-        "Nova senha",
-        "Email para nova senha foi enviado",
-        "success"
-      );
+      this.$store
+        .dispatch("Auth/sendReset", this.email)
+        .then((res) => {
+          this.loading = false;
+          this.$eventBus.$emit(
+            "newMessage",
+            "Nova senha",
+            "Email para nova senha foi enviado",
+            "success"
+          );
+        })
+        .catch((error) => {
+          this.loading = false;
+          this.$eventBus.$emit(
+            "newMessage",
+            "Login",
+            error.response.data.error,
+            "danger"
+          );
+        });
     },
   },
 };
